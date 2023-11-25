@@ -35,7 +35,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate & UINavi
         self.dismiss(animated: true, completion: nil)
 
         if let ciImage = CIImage(image: imageView.image!) {
-            fatalError("Could not convert to CIImage")
             choosenImage = ciImage
         }
 
@@ -61,9 +60,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate & UINavi
                                 let rounded = Int(confidenceLevel * 100) / 100
                                 self.label.text = "\(rounded)% it's \(topResult?.identifier ?? "unknown")"
                             }
-
                         }
                     }
+                }
+            }
+            let handler = VNImageRequestHandler(ciImage: image)
+            DispatchQueue.global(qos: .userInteractive).async {
+                do {
+                    try handler.perform([request])
+                } catch {
+                    print(error)
                 }
             }
         }
